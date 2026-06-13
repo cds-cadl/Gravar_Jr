@@ -4,304 +4,42 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
-<title>Gravar Jr. v1.5 — Clinical Video Observation</title>
+<title>Gravar Jr. v1.6 — Clinical Video Observation</title>
 <style>
-  :root{
-    --bg:#f6f7fb;
-    --panel:#ffffff;
-    --panel2:#f0f3f8;
-    --ink:#172033;
-    --muted:#5f6b7a;
-    --line:#d8deea;
-    --accent:#2e6fbb;
-    --accent2:#164f91;
-    --danger:#b43c3c;
-    --ok:#16734b;
-    --warn:#b36b00;
-    --shadow:0 8px 22px rgba(20,30,50,.10);
-    --radius:14px;
-    --gap:12px;
-    --tap:44px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
-  body{overflow:hidden;}
-  button,input,select,textarea{font:inherit}
-  button{min-height:var(--tap);border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 12px;cursor:pointer;color:var(--ink);touch-action:manipulation;}
-  button:hover{border-color:#b8c4d6;background:#f9fbff}
-  button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
-  button.primary:hover{background:var(--accent2)}
-  button.danger{color:#fff;background:var(--danger);border-color:var(--danger)}
-  button.ghost{background:transparent}
-  button.small{min-height:34px;padding:5px 8px;border-radius:8px;font-size:13px}
-  button:disabled{opacity:.45;cursor:not-allowed}
-  input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 10px;color:var(--ink);}
-  textarea{resize:vertical;min-height:78px;line-height:1.35}
-  label{font-size:13px;color:var(--muted);font-weight:650;display:block;margin-bottom:5px}
-  .app{height:100%;display:grid;grid-template-rows:auto 1fr;}
-  header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);background:#fff;gap:10px;}
-  .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
-  .brand h1{font-size:19px;margin:0;white-space:nowrap}
-  .brand .ver{font-size:12px;color:var(--muted);font-weight:700;background:var(--panel2);border:1px solid var(--line);padding:3px 7px;border-radius:999px;white-space:nowrap}
-  .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-  .workspace{height:100%;display:grid;grid-template-columns:minmax(360px,1.3fr) minmax(360px,.9fr);gap:var(--gap);padding:var(--gap);overflow:hidden;}
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;min-width:0;}
-  .panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--line);}
-  .panel-title h2{font-size:15px;margin:0}
-  .panel-body{padding:12px;overflow:auto;}
-  .video-panel{display:grid;grid-template-rows:auto 1fr auto;min-height:0;}
-  .source-box{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;padding:12px;border-bottom:1px solid var(--line);background:#fbfcff;}
-  .source-grid{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:end;}
-  .video-wrap{position:relative;background:#10141d;display:flex;align-items:center;justify-content:center;min-height:220px;overflow:hidden;}
-  video{width:100%;height:100%;max-height:100%;object-fit:contain;background:#000;}
-  #youtubeWrap{width:100%;height:100%;min-height:320px;background:#000;}
-  #youtubePlayer{width:100%;height:100%;background:#000;}
-  #webFrame{width:100%;height:100%;min-height:320px;border:0;background:#fff;}
-  .load-help{font-size:12px;color:var(--muted);line-height:1.35;margin-top:6px;}
-  .diagnostic{font-size:12px;color:#536172;background:#f8faff;border-top:1px solid var(--line);padding:7px 12px;line-height:1.35;}
-  .empty-video{color:#cbd5e5;text-align:center;padding:28px;line-height:1.45;max-width:560px}
-  .video-overlay-label{position:absolute;left:10px;top:10px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700;letter-spacing:.02em}
-  .transport{padding:10px 12px;border-top:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:#fff;}
-  .transport .controls{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center}
-  .time-readout{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap;color:#15243b;background:#eef3fb;padding:8px 10px;border-radius:10px;border:1px solid var(--line);text-align:center}
-  .speed{width:86px}
-  .right{display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap);overflow:hidden;}
-  .quick-add .panel-body{display:grid;gap:10px;}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .form-grid.three{grid-template-columns:1fr 1fr 1fr;}
-  .form-row{display:grid;gap:6px;}
-  .btn-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .annotation-panel{display:grid;grid-template-rows:auto 1fr;min-height:0;}
-  .list-toolbar{padding:10px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:#fbfcff;border-bottom:1px solid var(--line);}
-  .list-toolbar input{max-width:260px;min-height:40px}
-  .annotation-list{overflow:auto;padding:10px;display:grid;gap:9px;}
-  .row{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;}
-  .row.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(46,111,187,.15)}
-  .row-head{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;background:#f8faff;border-bottom:1px solid #e9eef7;padding:8px 9px;}
-  .pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:800;border:1px solid var(--line);background:#fff;white-space:nowrap}
-  .pill.note{color:#175f94;background:#edf6ff;border-color:#cbe6ff}
-  .pill.transcript{color:#6b3b00;background:#fff5e8;border-color:#ffe0b1}
-  .pill.code{color:#185f3b;background:#ebfbf3;border-color:#c6efd9}
-  .row-time{font-variant-numeric:tabular-nums;font-weight:850;color:#24344e}
-  .row-body{padding:9px 10px;display:grid;gap:6px;}
-  .row-label{font-size:13px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
-  .row-text{white-space:pre-wrap;line-height:1.35}
-  .row-actions{display:flex;gap:6px;flex-wrap:wrap;padding:0 10px 9px 10px;}
-  .status{font-size:13px;color:var(--muted);min-height:18px;padding:0 2px}
-  .modal-backdrop{position:fixed;inset:0;background:rgba(14,22,38,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20;}
-  .modal{width:min(760px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 22px 60px rgba(0,0,0,.25);}
-  .modal header{border-bottom:1px solid var(--line)}
-  .modal .content{padding:14px;display:grid;gap:12px}
-  .modal-backdrop.show{display:flex}
-  .help-text{font-size:14px;line-height:1.5;color:#29364d}
-  .help-text h3{margin:.5em 0 .2em;font-size:15px}
-  .help-text ul{margin-top:5px;padding-left:20px}
-  .file-input{display:none}
-  .nowrap{white-space:nowrap}
-  .hidden{display:none!important}
-  @media (max-width: 920px){
-    body{overflow:auto;}
-    .app{height:auto;min-height:100%;}
-    .workspace{height:auto;display:grid;grid-template-columns:1fr;overflow:visible;}
-    .right{overflow:visible;}
-    .video-panel{min-height:520px;}
-    .annotation-panel{min-height:420px;}
-    .source-grid{grid-template-columns:1fr;}
-    .transport{grid-template-columns:1fr;}
-    .time-readout{justify-self:stretch}
-    .header-actions{display:none}
-  }
-  @media (max-width: 560px){
-    .form-grid,.form-grid.three{grid-template-columns:1fr;}
-    .source-box{grid-template-columns:1fr;}
-    .brand h1{font-size:16px}
-    button{padding-left:10px;padding-right:10px}
-  }
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#172033;--muted:#5d6878;--line:#cfd7e5;--accent:#2e6fbb;--accent2:#164f91;--danger:#b43c3c;--radius:18px;--tap:52px;--shadow:0 5px 16px rgba(20,30,50,.10)}
+*{box-sizing:border-box} html,body{height:100%;margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif} body{overflow:hidden} button,input,select,textarea{font:inherit} button{min-height:var(--tap);border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);padding:9px 13px;font-weight:650;cursor:pointer;touch-action:manipulation} button.primary{background:var(--accent);border-color:var(--accent);color:#fff} button.primary:hover{background:var(--accent2)} button.danger{background:var(--danger);border-color:var(--danger);color:#fff} button.small{min-height:40px;padding:6px 10px;font-size:13px} button:disabled{opacity:.45} input,select,textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px 11px;color:var(--ink)} textarea{resize:none;line-height:1.35} label{display:block;font-size:12px;color:var(--muted);font-weight:750;margin-bottom:4px}.hidden{display:none!important}.file-input{display:none}.app{height:100%;padding:12px}.layout{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 154px;grid-template-rows:auto minmax(260px,1fr) minmax(190px,.48fr);gap:10px;max-width:1500px;margin:0 auto}.topbar,.video-panel,.bottom-panel,.side-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.topbar{grid-column:1;display:grid;grid-template-columns:minmax(190px,1fr) 150px 140px 150px;gap:9px;align-items:end;padding:10px 12px}.top-field{min-width:0}.video-name{height:46px;border:1px solid var(--line);border-radius:12px;padding:11px;background:#f8faff;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.time-readout{height:46px;border:1px solid var(--line);border-radius:12px;background:#eef3fb;padding:11px;text-align:center;font-variant-numeric:tabular-nums;font-weight:850}.file-box{grid-column:2;grid-row:1;position:relative}.file-box>button{width:100%;height:100%;font-size:18px}.file-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);width:220px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 38px rgba(0,0,0,.20);padding:7px;z-index:30}.file-menu.show{display:grid}.file-menu button{min-height:42px;border:0;border-radius:9px;text-align:left;background:#fff}.file-menu button:hover{background:#eef3fb}
+.video-panel{grid-column:1;grid-row:2;position:relative;overflow:hidden;background:#10141d;min-height:0}.video-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative}video,#youtubeWrap,#youtubePlayer,#webFrame{width:100%;height:100%;border:0;background:#000}video{object-fit:contain}.empty-video{color:#dbe5f4;text-align:center;padding:30px;line-height:1.5;max-width:620px}.video-overlay-label{position:absolute;left:12px;top:12px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:750}.diagnostic{position:absolute;left:10px;right:10px;bottom:8px;background:rgba(255,255,255,.92);border-radius:10px;padding:7px 10px;font-size:11px;color:#47556b;max-height:48px;overflow:auto}.yt-actions{position:absolute;right:10px;top:10px;background:#fff;padding:5px;border-radius:10px;display:flex;gap:6px;align-items:center;font-size:12px}.yt-actions a{color:var(--accent)}
+.transport{grid-column:2;grid-row:2;display:flex;flex-direction:column;gap:8px;padding:10px}.transport button{width:100%;flex:1;font-size:18px}.transport .play{flex:1.35}.speed-wrap{margin-top:auto}.speed-wrap select{height:44px}
+.bottom-panel{grid-column:1;grid-row:3;overflow:hidden;min-height:0}.add-pane{height:100%;display:grid;grid-template-rows:1fr auto;gap:8px;padding:11px}.note-area textarea{height:100%;min-height:86px;font-size:16px}.fields{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px;align-items:end}.field-actions{display:flex;gap:7px}.field-actions button{min-height:46px}.status{font-size:12px;color:var(--muted);min-height:16px}.annotation-pane{height:100%;display:grid;grid-template-rows:auto 1fr;min-height:0}.list-toolbar{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:8px;border-bottom:1px solid var(--line)}.annotation-list{overflow:auto;padding:8px;display:grid;gap:7px}.row{border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden}.row.active{border-color:var(--accent);box-shadow:0 0 0 2px rgba(46,111,187,.15)}.row-head{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;background:#f8faff;border-bottom:1px solid #e9eef7;padding:6px 8px}.pill{display:inline-flex;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;border:1px solid var(--line);background:#fff;white-space:nowrap}.row-time{font-variant-numeric:tabular-nums;font-weight:800}.row-body{padding:7px 9px}.row-label{font-size:12px;color:var(--muted);display:flex;gap:8px}.row-text{white-space:pre-wrap;line-height:1.3}.row-actions{display:flex;gap:5px;padding:0 9px 7px}.row-actions button{min-height:34px;padding:4px 7px;font-size:12px}
+.action-stack{grid-column:2;grid-row:3;display:grid;grid-template-rows:1fr 1fr;gap:8px}.action-stack button{width:100%;font-size:16px}.source-hidden{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.modal-backdrop{position:fixed;inset:0;background:rgba(14,22,38,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}.modal-backdrop.show{display:flex}.modal{width:min(760px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid var(--line);box-shadow:0 22px 60px rgba(0,0,0,.25)}.modal header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line)}.modal .content{padding:14px;line-height:1.5}.brand{display:flex;gap:10px;align-items:center}.brand h1{font-size:18px;margin:0}.ver{font-size:12px;color:var(--muted)}
+@media(max-width:800px){.app{padding:7px}.layout{grid-template-columns:minmax(0,1fr) 112px;grid-template-rows:auto minmax(250px,48vh) minmax(220px,36vh);gap:7px}.topbar{grid-template-columns:minmax(120px,1fr) 110px 96px 112px;padding:7px;gap:6px}.topbar label{font-size:10px}.video-name,.time-readout{height:42px;padding:10px 7px;font-size:13px}.topbar button,.topbar select{min-height:42px;padding:6px;font-size:13px}.file-box>button{font-size:14px}.transport{padding:7px;gap:6px}.transport button{min-height:44px;font-size:15px;padding:5px}.fields{grid-template-columns:1fr 1fr;overflow:auto}.field-actions{grid-column:1/-1}.diagnostic{display:none}.action-stack button{font-size:13px;padding:5px}.list-toolbar{grid-template-columns:1fr auto}.list-toolbar #countBadge{display:none}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <div class="brand">
-      <h1>Gravar Jr.</h1>
-      <span class="ver">v1.5 clinical observation</span>
-    </div>
-    <div class="header-actions">
-      <button id="newProjectBtn">New</button>
-      <button id="saveJsonBtn">Save project JSON</button>
-      <button id="loadJsonBtn">Load project JSON</button>
-      <button id="exportCsvBtn">Export CSV</button>
-      <button id="exportHtmlBtn">Export HTML report</button>
-      <button id="helpBtn">Help</button>
-    </div>
-  </header>
+<div class="app"><main class="layout">
+  <section class="topbar">
+    <div class="top-field"><label>Video</label><div id="videoTitleDisplay" class="video-name">No video selected</div></div>
+    <div class="top-field"><label for="sourceType">Source</label><select id="sourceType"><option value="local">Local</option><option value="youtube">YouTube</option><option value="panopto">Panopto</option></select></div>
+    <div class="top-field"><label>&nbsp;</label><button id="chooseVideoBtn" class="primary">Choose Video</button></div>
+    <div class="top-field"><label>Current Time</label><div class="time-readout" id="timeReadout">00:00:00.0</div></div>
+    <div class="source-hidden" aria-hidden="true"><label id="sourceLabel" for="sourceUrl">Choose video</label><input id="sourceUrl" type="text"><input id="localFile" type="file" accept="video/*,.mov,.mp4,.m4v,.webm"><div id="loadHelp"></div><button id="loadSourceBtn">Load video</button></div>
+  </section>
+  <div class="file-box side-card"><button id="fileMenuBtn">File I/O</button><div id="fileMenu" class="file-menu"><button id="newProjectBtn">New project</button><button id="saveJsonBtn">Save project JSON</button><button id="loadJsonBtn">Load project JSON</button><button id="exportCsvBtn">Export CSV</button><button id="exportHtmlBtn">Export HTML report</button><button id="helpBtn">Help</button></div></div>
 
-  <main class="workspace">
-    <section class="panel video-panel">
-      <div class="source-box">
-        <div class="source-grid">
-          <div>
-            <label for="sourceType">Video source</label>
-            <select id="sourceType">
-              <option value="local">Local file</option>
-              <option value="youtube">YouTube URL</option>
-              <option value="url">Direct video file URL</option>
-              <option value="web">Web page / embedded video</option>
-            </select>
-          </div>
-          <div id="sourceInputWrap">
-            <label id="sourceLabel" for="sourceUrl">Choose video</label>
-            <input id="sourceUrl" type="text" placeholder="Paste YouTube or direct video URL" class="hidden" />
-            <input id="localFile" type="file" accept="video/*,.mov,.mp4,.m4v,.webm" />
-            <div id="loadHelp" class="load-help">Local files work best when this app is opened from a hosted web link in Safari/Chrome, not from Chrome Downloads.</div>
-          </div>
-        </div>
-        <button id="loadSourceBtn" class="primary">Load video</button>
-      </div>
+  <section class="video-panel"><div class="video-wrap" id="videoWrap"><video id="localVideo" controls playsinline webkit-playsinline preload="metadata" class="hidden"></video><div id="youtubeWrap" class="hidden"><div id="youtubePlayer"></div></div><iframe id="webFrame" class="hidden" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="empty-video" id="emptyVideo"><strong>Choose Local, YouTube, or Panopto.</strong><br>Then choose the assigned video and begin observing.</div><div class="video-overlay-label hidden" id="videoModeLabel"></div></div><div class="diagnostic" id="videoDiagnostic">No video loaded.</div><div class="yt-actions hidden" id="ytActions"><a id="openYouTubeLink" href="#" target="_blank" rel="noopener">Open in YouTube</a><button id="copyEmbedBtn" class="small">Copy embed URL</button></div></section>
 
-      <div class="video-wrap" id="videoWrap">
-        <video id="localVideo" controls playsinline webkit-playsinline preload="metadata" class="hidden"></video>
-        <div id="youtubeWrap" class="hidden"><div id="youtubePlayer"></div></div>
-        <iframe id="webFrame" class="hidden" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-        <div class="empty-video" id="emptyVideo">
-          <strong>Load a local video, YouTube link, or direct video URL.</strong><br>
-          Then watch, pause, and add time-linked clinical notes or lightweight transcription rows.
-        </div>
-        <div class="video-overlay-label hidden" id="videoModeLabel">LOCAL VIDEO</div>
-      </div>
-      <div class="diagnostic" id="videoDiagnostic">No video loaded. On iPad, use a hosted web link for the app; Chrome generally will not run a downloaded HTML app from Downloads.</div>
-      <div class="yt-actions hidden" id="ytActions"><a id="openYouTubeLink" href="#" target="_blank" rel="noopener">Open this video in YouTube</a><button id="copyEmbedBtn">Copy embed URL</button></div>
+  <aside class="transport side-card"><button id="back5Btn">−5s</button><button id="back1Btn">−1s</button><button id="playPauseBtn" class="primary play">Play</button><button id="fwd1Btn">+1s</button><button id="fwd5Btn">+5s</button><div class="speed-wrap"><label for="speedSelect">Speed</label><select id="speedSelect"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div></aside>
 
-      <div class="transport">
-        <div class="time-readout" id="timeReadout">00:00:00.0</div>
-        <div class="controls">
-          <button id="back5Btn">−5s</button>
-          <button id="back1Btn">−1s</button>
-          <button id="playPauseBtn" class="primary">Play</button>
-          <button id="fwd1Btn">+1s</button>
-          <button id="fwd5Btn">+5s</button>
-          <button id="markStartBtn">Set start</button>
-          <button id="markEndBtn">Set end</button>
-          <button id="captureNowBtn">Use current time</button>
-        </div>
-        <div>
-          <label for="speedSelect">Speed</label>
-          <select id="speedSelect" class="speed">
-            <option value="0.5">0.5×</option>
-            <option value="0.75">0.75×</option>
-            <option value="1" selected>1×</option>
-            <option value="1.25">1.25×</option>
-            <option value="1.5">1.5×</option>
-            <option value="2">2×</option>
-          </select>
-        </div>
-      </div>
-    </section>
+  <section class="bottom-panel">
+    <div id="addPane" class="add-pane"><div class="note-area"><label for="annText">Note</label><textarea id="annText" placeholder="Write a note or brief transcription."></textarea></div><div><div class="fields"><div><label for="annStart">Start</label><input id="annStart" type="text" placeholder="00:00:00.0"></div><div><label for="annEnd">End</label><input id="annEnd" type="text" placeholder="Optional"></div><div><label for="annLabel">Code</label><input id="annLabel" type="text" list="labelSuggestions" placeholder="Code"><datalist id="labelSuggestions"><option value="AAC selection"><option value="Communication breakdown"><option value="Device output"><option value="Gaze shift"><option value="Partner assistance"><option value="Repair"><option value="Response delay"><option value="Topic shift"><option value="Wait time"></datalist></div><div><label for="annActor">Speaker</label><input id="annActor" type="text" placeholder="Speaker/actor"></div><div class="field-actions"><button id="markStartBtn">Set Start</button><button id="markEndBtn">Set End</button><button id="addAnnBtn" class="primary">Add</button><button id="updateAnnBtn" class="hidden">Update</button><button id="clearFormBtn">Clear</button></div></div><div class="status" id="statusLine">Ready.</div></div><select id="annType" class="hidden"><option value="Note">Note</option><option value="Transcript">Transcript</option><option value="Code">Code</option></select><button id="captureNowBtn" class="hidden">Set start</button><button id="mobileExportsBtn" class="hidden">Exports</button><span id="projectStatus" class="hidden">No project saved yet</span></div>
+    <div id="annotatePane" class="annotation-pane hidden"><div class="list-toolbar"><input id="filterText" type="search" placeholder="Filter annotations"><button id="sortBtn" class="small">Sort by time</button><span id="countBadge" class="pill">0 rows</span></div><div class="annotation-list" id="annotationList"></div></div>
+  </section>
 
-    <aside class="right">
-      <section class="panel quick-add">
-        <div class="panel-title">
-          <h2>Add time-linked observation</h2>
-          <span class="status" id="projectStatus">No project saved yet</span>
-        </div>
-        <div class="panel-body">
-          <div class="form-grid three">
-            <div class="form-row">
-              <label for="annType">Type</label>
-              <select id="annType">
-                <option value="Note">Note</option>
-                <option value="Transcript">Transcript</option>
-                <option value="Code">Code</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <label for="annStart">Start</label>
-              <input id="annStart" type="text" placeholder="00:00:00.0" />
-            </div>
-            <div class="form-row">
-              <label for="annEnd">End optional</label>
-              <input id="annEnd" type="text" placeholder="00:00:00.0" />
-            </div>
-          </div>
-          <div class="form-grid">
-            <div class="form-row">
-              <label for="annLabel">Label/code</label>
-              <input id="annLabel" type="text" list="labelSuggestions" placeholder="e.g., Repair, Gaze, Device use" />
-              <datalist id="labelSuggestions">
-                <option value="AAC selection"></option>
-                <option value="Communication breakdown"></option>
-                <option value="Device output"></option>
-                <option value="Gaze shift"></option>
-                <option value="Partner assistance"></option>
-                <option value="Repair"></option>
-                <option value="Response delay"></option>
-                <option value="Topic shift"></option>
-                <option value="Wait time"></option>
-              </datalist>
-            </div>
-            <div class="form-row">
-              <label for="annActor">Speaker/actor optional</label>
-              <input id="annActor" type="text" placeholder="Client, partner, device, clinician" />
-            </div>
-          </div>
-          <div class="form-row">
-            <label for="annText">Text / note</label>
-            <textarea id="annText" placeholder="Write a note, brief transcript, or clinical observation."></textarea>
-          </div>
-          <div class="btn-row">
-            <button id="addAnnBtn" class="primary">Add annotation</button>
-            <button id="updateAnnBtn" class="hidden">Update selected</button>
-            <button id="clearFormBtn">New blank annotation</button>
-            <button id="mobileExportsBtn">Exports</button>
-          </div>
-          <div class="status" id="statusLine">Ready.</div>
-        </div>
-      </section>
-
-      <section class="panel annotation-panel">
-        <div class="panel-title">
-          <h2>Annotations</h2>
-          <span id="countBadge" class="pill">0 rows</span>
-        </div>
-        <div class="list-toolbar">
-          <input id="filterText" type="search" placeholder="Filter notes, labels, actors" />
-          <div class="btn-row">
-            <button id="sortBtn" class="small">Sort by time</button>
-            <button id="deleteSelectedBtn" class="small danger" disabled>Delete selected</button>
-          </div>
-        </div>
-        <div class="annotation-list" id="annotationList"></div>
-      </section>
-    </aside>
-  </main>
-</div>
-
-<input id="jsonFileInput" class="file-input" type="file" accept="application/json,.json" />
-
-<div class="modal-backdrop" id="helpModal">
-  <div class="modal">
-    <header>
-      <div class="brand"><h1>Gravar Jr. Help</h1><span class="ver">v1.5</span></div>
-      <button id="closeHelpBtn">Close</button>
-    </header>
-    <div class="content help-text">
-      <p><strong>Purpose:</strong> Gravar Jr. is a simplified clinical video observation notebook. It is intended for watching video and creating time-linked notes, lightweight transcription rows, and codes.</p>
-      <h3>Basic workflow</h3>
-      <ul>
-        <li>Load a local video file, a YouTube URL, or a direct browser-playable video URL.</li>
-        <li>Pause at a clinically meaningful moment and choose <strong>Use current time</strong>.</li>
-        <li>Add a note, transcript, or code. End time is optional.</li>
-        <li>Click Replay to play a row; click the row body to load it for editing. Add annotation always appends a new row.</li>
-        <li>Save a project JSON to keep editing later. Export CSV or HTML for sharing/review.</li>
-      </ul>
-      <h3>Streaming limits</h3>
-      <p>YouTube playback uses the official embedded player. Direct URLs work only when the site permits browser playback and embedding. Some institutional or commercial sites may block access, timing, or embedding.</p>
-      <h3>Not included in v1.0</h3>
-      <p>No ELAN functions, waveform analysis, pop-out windows, dual-video synchronization, or instruction/student mode.</p>
-    </div>
-  </div>
-</div>
-
+  <aside class="action-stack"><button id="modeToggleBtn" class="side-card">Annotate</button><button id="deleteSelectedBtn" class="danger side-card" disabled>Delete Selected</button></aside>
+</main></div>
+<input id="jsonFileInput" class="file-input" type="file" accept="application/json,.json">
+<div class="modal-backdrop" id="helpModal"><div class="modal"><header><div class="brand"><h1>Gravar Jr. Help</h1><span class="ver">v1.6</span></div><button id="closeHelpBtn">Close</button></header><div class="content"><p><strong>Video</strong> shows the current filename or source title. Choose <strong>Local</strong>, <strong>YouTube</strong>, or <strong>Panopto</strong> from Source, then select <strong>Choose Video</strong>.</p><p>Use Set Start and Set End to copy the current video position into the annotation. Add saves a new row. Annotate switches the bottom panel to the accumulated annotation list.</p><p>File I/O contains project load/save and export functions.</p></div></div></div>
 <script>
 (function(){
   'use strict';
@@ -387,6 +125,7 @@
   }
   function status(msg){ els.statusLine.textContent = msg; }
   function markDirty(v=true){ dirty = v; els.projectStatus.textContent = dirty ? 'Unsaved changes' : 'Saved / clean'; }
+  function updateVideoTitle(){ const el=document.getElementById('videoTitleDisplay'); if(el) el.textContent = source.name || (source.type==='youtube' && source.youtubeId ? 'YouTube '+source.youtubeId : 'No video selected'); }
 
   function extractYouTubeId(url){
     const txt = String(url||'').trim();
@@ -472,7 +211,7 @@
       showMode('local', 'LOCAL VIDEO');
       setDiag('Local file selected: ' + f.name + '. Tap the video Play button once if the browser blocks scripted playback.');
       status('Loaded local video: ' + f.name);
-      markDirty(true);
+      updateVideoTitle(); markDirty(true);
     } else if(type === 'url'){
       const url = els.sourceUrl.value.trim();
       if(!url){ status('Paste a direct video file URL first.'); setDiag('Direct video URLs must point to a browser-playable file such as .mp4, .m4v, .mov, or .webm. Regular web pages usually will not work here.'); return; }
@@ -482,7 +221,7 @@
       showMode('url', 'DIRECT VIDEO URL');
       setDiag('Loaded as an HTML5 video file URL. If the video stays blank, the server may block browser playback, require login, or the link may not be a direct video file.');
       status('Loaded direct video file URL.');
-      markDirty(true);
+      updateVideoTitle(); markDirty(true);
     } else if(type === 'youtube'){
       const url = els.sourceUrl.value.trim();
       const id = extractYouTubeId(url);
@@ -492,16 +231,16 @@
       createOrLoadYouTube(id);
       setDiag('YouTube loaded through the official embedded player with strict-origin-when-cross-origin referrer policy. Some videos disable embedding, and YouTube timing is approximate rather than frame-accurate.');
       status('Loaded YouTube video. Some videos may not permit embedding.');
-      markDirty(true);
-    } else if(type === 'web'){
+      updateVideoTitle(); markDirty(true);
+    } else if(type === 'panopto'){
       const url = els.sourceUrl.value.trim();
-      if(!url){ status('Paste a web page or embed URL first.'); setDiag('Use this only when YouTube/direct video is not available. Browser security prevents Gravar Jr. from reading the embedded player time, so use the app timer manually.'); return; }
-      source = {type:'web', name:url, url, youtubeId:''};
+      if(!url){ status('Paste a Panopto embed URL first.'); setDiag('Use the Panopto Embed URL supplied by your institution. Browser security prevents Gravar Jr. from reading the embedded player time, so use the app timer manually.'); return; }
+      source = {type:'panopto', name:url, url, youtubeId:''};
       els.webFrame.src = url;
-      showMode('web', 'WEB EMBED');
-      setDiag('Web page embedded. Browser security usually prevents automatic timing control for this mode; use this for viewing and manual time-linked notes only.');
-      status('Loaded web page/embed view. Automatic playback timing may not be available.');
-      markDirty(true);
+      showMode('web', 'PANOPTO');
+      setDiag('Panopto player embedded. Browser security usually prevents automatic timing control for this mode; use this for viewing and manual time-linked notes only.');
+      status('Loaded Panopto embed view. Automatic playback timing may not be available.');
+      updateVideoTitle(); markDirty(true);
     }
     startTicker();
   }
@@ -558,9 +297,9 @@
     const isLocal = type === 'local';
     els.localFile.classList.toggle('hidden', !isLocal);
     els.sourceUrl.classList.toggle('hidden', isLocal);
-    els.sourceLabel.textContent = isLocal ? 'Choose video' : (type === 'youtube' ? 'YouTube URL or ID' : (type === 'web' ? 'Web page / embed URL' : 'Direct video file URL'));
-    els.sourceUrl.placeholder = type === 'youtube' ? 'https://www.youtube.com/watch?v=...' : (type === 'web' ? 'https://example.org/page-with-video' : 'https://example.org/video.mp4');
-    els.loadHelp.textContent = isLocal ? 'On iPad, this app should be opened from a hosted web link; then choose a video from Photos or Files.' : (type === 'youtube' ? 'YouTube requires a real web origin/referrer; downloaded/local HTML will usually trigger Error 153. On Mac, use the included localhost launcher.' : (type === 'web' ? 'Web embeds are view-only; automatic video timing may be unavailable.' : 'Direct URLs must point to the actual video file, not a webpage.'));
+    els.sourceLabel.textContent = isLocal ? 'Choose video' : (type === 'youtube' ? 'YouTube URL or ID' : (type === 'panopto' ? 'Panopto embed URL' : 'Direct video file URL'));
+    els.sourceUrl.placeholder = type === 'youtube' ? 'https://www.youtube.com/watch?v=...' : (type === 'panopto' ? 'https://YOUR-INSTITUTION.hosted.panopto.com/Panopto/Pages/Embed.aspx?id=...' : 'https://example.org/video.mp4');
+    els.loadHelp.textContent = isLocal ? 'On iPad, this app should be opened from a hosted web link; then choose a video from Photos or Files.' : (type === 'youtube' ? 'YouTube requires a real web origin/referrer; downloaded/local HTML will usually trigger Error 153. On Mac, use the included localhost launcher.' : (type === 'panopto' ? 'Panopto timing control depends on the institutional embed configuration; manual time entry may be needed.' : 'Direct URLs must point to the actual video file, not a webpage.'));
   }
 
   function clearForm(){
@@ -713,7 +452,7 @@
 
   function projectObject(){
     return {
-      app:'Gravar Jr.', version:'1.5', savedAt:new Date().toISOString(),
+      app:'Gravar Jr.', version:'1.6', savedAt:new Date().toISOString(),
       source, annotations
     };
   }
@@ -734,7 +473,7 @@
           els.sourceType.value = 'youtube'; onSourceTypeChange(); els.sourceUrl.value = source.url || source.youtubeId; createOrLoadYouTube(source.youtubeId); showMode('youtube','YOUTUBE');
         } else if(source.type === 'url' && source.url){
           els.sourceType.value = 'url'; onSourceTypeChange(); els.sourceUrl.value = source.url; els.localVideo.src = source.url; els.localVideo.load(); showMode('url','DIRECT URL');
-        } else if(source.type === 'web' && source.url){
+        } else if(source.type === 'panopto' && source.url){
           els.sourceType.value = 'web'; onSourceTypeChange(); els.sourceUrl.value = source.url; els.webFrame.src = source.url; showMode('web','WEB EMBED');
         } else {
           els.sourceType.value = 'local'; onSourceTypeChange(); showMode('none','');
@@ -815,6 +554,38 @@
   els.helpBtn.addEventListener('click', ()=>els.helpModal.classList.add('show'));
   els.closeHelpBtn.addEventListener('click', ()=>els.helpModal.classList.remove('show'));
   els.helpModal.addEventListener('click', e=>{ if(e.target===els.helpModal) els.helpModal.classList.remove('show'); });
+
+  const fileMenuBtn = document.getElementById('fileMenuBtn');
+  const fileMenu = document.getElementById('fileMenu');
+  const chooseVideoBtn = document.getElementById('chooseVideoBtn');
+  const modeToggleBtn = document.getElementById('modeToggleBtn');
+  const addPane = document.getElementById('addPane');
+  const annotatePane = document.getElementById('annotatePane');
+  let workspaceMode = 'add';
+  function setWorkspaceMode(mode){
+    workspaceMode = mode;
+    addPane.classList.toggle('hidden', mode !== 'add');
+    annotatePane.classList.toggle('hidden', mode !== 'annotate');
+    modeToggleBtn.textContent = mode === 'add' ? 'Annotate' : 'Add';
+    modeToggleBtn.setAttribute('aria-pressed', mode === 'annotate' ? 'true' : 'false');
+    status(mode === 'add' ? 'Add mode.' : 'Annotation list mode.');
+  }
+  fileMenuBtn.addEventListener('click', e=>{ e.stopPropagation(); fileMenu.classList.toggle('show'); });
+  document.addEventListener('click', e=>{ if(!fileMenu.contains(e.target) && e.target!==fileMenuBtn) fileMenu.classList.remove('show'); });
+  fileMenu.addEventListener('click', ()=>fileMenu.classList.remove('show'));
+  modeToggleBtn.addEventListener('click', ()=>setWorkspaceMode(workspaceMode === 'add' ? 'annotate' : 'add'));
+  chooseVideoBtn.addEventListener('click', ()=>{
+    const type = els.sourceType.value;
+    if(type === 'local'){
+      els.localFile.click();
+    } else {
+      const promptText = type === 'youtube' ? 'Paste a YouTube URL or video ID:' : 'Paste the Panopto embed URL:';
+      const entered = window.prompt(promptText, els.sourceUrl.value || '');
+      if(entered !== null){ els.sourceUrl.value = entered.trim(); if(els.sourceUrl.value) loadSource(); }
+    }
+  });
+  els.localFile.addEventListener('change', ()=>{ if(els.sourceType.value==='local' && els.localFile.files[0]) loadSource(); });
+
   window.addEventListener('beforeunload', e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
   window.addEventListener('keydown', e=>{
     const tag = (e.target.tagName || '').toLowerCase();
